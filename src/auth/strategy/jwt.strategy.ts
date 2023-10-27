@@ -1,9 +1,12 @@
-import { PrismaService } from './../../prisma/prisma.service';
+// import { PrismaService } from './../../prisma/prisma.service';
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from '@nestjs/config';
 import { env } from "process";
+import { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Repository } from "typeorm";
 
 
 @Injectable()
@@ -14,7 +17,8 @@ export class JwtStrategy extends PassportStrategy(
 {
     constructor(
         config: ConfigService,
-        private prisma: PrismaService) {
+        @InjectRepository(User)
+        private userRepository: Repository<User>) {
         super({
             jwtFromRequest:
                 ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -26,12 +30,9 @@ export class JwtStrategy extends PassportStrategy(
         sub: number;
         email: string
     }) {
-        const user =
-        await this.prisma.user.findUnique({
-            where:{
-                id: payload.sub,
-            }
-        })
+       
+        const user =await this.userRepository.findOne({where: {id: payload.sub}})
+
         delete user.hash;
         return user
     }

@@ -1,8 +1,12 @@
 {
     "cSpell.words": [
         "datasources",
+        "fkey",
+        "handlerbars",
         "nestjs",
         "pactum",
-        "signin"
+        "pkey",
+        "signin",
+        "typeorm"
     ]
 }
